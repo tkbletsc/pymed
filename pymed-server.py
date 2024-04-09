@@ -9,6 +9,18 @@ from pymed_protocol import Command,Response,aes_encrypt,aes_decrypt
 
 GLOBAL_KEY = b'0123456789abcdef'  # 16-byte key (128 bits)
 
+# each normal receive is not guaranteed to get the full amount, particularly if it comes in multiple packets
+# this will loop and ensure we get the full intended buffer size
+def receive_exact_bytes(sock, num_bytes):
+    received_data = b''  # Initialize an empty byte string to store received data
+    while len(received_data) < num_bytes:
+        remaining_bytes = num_bytes - len(received_data)
+        data = sock.recv(remaining_bytes)  # Receive data from the socket
+        if not data:
+            raise RuntimeError("Socket connection closed unexpectedly")
+        received_data += data  # Append received data to the buffer
+    return received_data
+
 def handle_service(client_socket, mode):
     try:
         if mode=='challenge':
@@ -19,7 +31,8 @@ def handle_service(client_socket, mode):
             client_socket.sendall(chal_data)
     
         # Receive 16 bytes from the client
-        cmd_data = client_socket.recv(16)
+        #cmd_data = client_socket.recv(16)
+        cmd_data = receive_exact_bytes(client_socket,16) # wait for receipt of full 16 bytes (allows multiple packets to work)
         print(f"Command received:  {cmd_data.hex(' ')}")
         
         if mode=='encrypt' or mode=='challenge':
