@@ -14,7 +14,7 @@ Files:
 ## Assignments
  1. Write a basic pymed-client.py that sends a Command with a verb specified on the command line, receives and parses a Response, and displays it. Test this client against the provided server. The intro video will get you started.
  2. Using Wireshark, observe the traffic between pymed-client and pymed-server. You can see everything! Using just a terminal and netcat, construct a command that will maliciously turn on the LED. Hints:
-      - ``echo -e '\x55\x44'`` will create the bytes 55 44
+      - ``echo -ne '\x55\x44'`` will create the bytes 55 44
       - ``nc localhost 5000`` will connect to the given host and port, and you can pipe content in and out of it
       - ``hd`` or ``hexdump -C`` will display output as formatted hex
  3. Update your pymed-client to use encryption. Encrypt your command before sending it, and decrypt the response before parsing it. Run the server with the option "-m encrypt". Note the global secret key in the provided server. Once successful, your client and server should work as before, but with encryption. 
