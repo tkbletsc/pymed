@@ -14,9 +14,9 @@ Files:
 ## Assignments
  1. Write a basic pymed-client.py that sends a Command with a verb specified on the command line, receives and parses a Response, and displays it. Test this client against the provided server. The intro video will get you started.
  2. Using Wireshark, observe the traffic between pymed-client and pymed-server. You can see everything! Using just a terminal and netcat, construct a command that will maliciously turn on the LED. Hints:
-      - "echo -e '\x55\x44'" will create the bytes 55 44
-      - "nc localhost 5000" will connect to the given host and port, and you can pipe content in and out of it
-      - "hd" or "hexdump -C" will display output as formatted hex
+      - ``echo -e '\x55\x44'`` will create the bytes 55 44
+      - ``nc localhost 5000`` will connect to the given host and port, and you can pipe content in and out of it
+      - ``hd`` or ``hexdump -C`` will display output as formatted hex
  3. Update your pymed-client to use encryption. Encrypt your command before sending it, and decrypt the response before parsing it. Run the server with the option "-m encrypt". Note the global secret key in the provided server. Once successful, your client and server should work as before, but with encryption. 
       - Hint: **pymed_protocol.py** includes ``aes_encrypt`` and ``aes_decrypt``, which operate on 16-byte blocks. Commands and responses are also 16 bytes.
  4. Again using wireshark, we see that we cannot understand the content of packets, *however*, we observe that the packets are always the same, because the key and command content is always the same! This means our protocol is vulnerable to *replay attacks*, in which the attacker blindly sends an identical packet. Observe the sequence of bytes that correspond to LED ON in wireshark, then construct an attack on the terminal that replays this request and confirm that it indeed turns the LED on, despite the attacker not knowing the secret key.
